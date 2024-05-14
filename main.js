@@ -1,88 +1,73 @@
-const conjuntoRemeras = [{
-    nombre: "REMERA BLANCA",
-    precio: 5000
-},
-{
-    nombre: "REMERA NEGRA",
-    precio: 5500
-},
-{
-    nombre: "REMERA AZUL",
-    precio: 3500
-}];
+const preguntas = [
+    {
+        pregunta: "¿Quién fue el campeón del mundo de MotoGP en la temporada 2021?",
+        opciones: ["Marc Márquez", "Valentino Rossi", "Fabio Quartararo", "Joan Mir"],
+        respuesta: 2 // Índice de la respuesta correcta en el array de opciones
+    },
+    {
+        pregunta: "¿Qué equipo ganó el campeonato de constructores en la temporada 2023 de MotoGP?",
+        opciones: ["Honda", "Ducati", "Yamaha", "Aprilia"],
+        respuesta: 1
+    },
+    {
+        pregunta: "¿Cuál es el circuito más largo del calendario de MotoGP?",
+        opciones: ["Circuito de Sepang", "Circuito de Mugello", "Circuito de las Américas", "Circuito de Silverstone"],
+        respuesta: 0
+    },
+    {
+        pregunta: "¿En qué circuito se celebra el Gran Premio de Catalunya en MotoGP?",
+        opciones: ["Jerez", "Losail", "Montmeló", "Cheste"],
+        respuesta: 2
+    },
+    {
+        pregunta: "¿Quién es el piloto más joven en ganar un Gran Premio de MotoGP?",
+        opciones: ["Jorge Martin", "Pedro Acosta", "Valentino Rossi", "Marc Marquez"],
+        respuesta: 3
+    }
+];
 
-const conjuntoPantalones = [{
-    nombre: "JEAN CLARO",
-    precio: 10000
-},
-{
-    nombre: "JEAN OSCURO",
-    precio: 11000
-},
-{
-    nombre: "JEAN NEGRO",
-    precio: 10500
-}];
+let puntaje = 0;
+let preguntaActual = 0;
 
-const carrito = [];
+function mostrarPregunta() {
+    const pregunta = preguntas[preguntaActual];
+    const preguntaElement = document.getElementById("pregunta");
+    preguntaElement.textContent = pregunta.pregunta;
 
-function buscar() {
-let palabra;
-alert("Bienvenido a nuestra tienda. Aquí puedes encontrar nuestras remeras y pantalones.");
-palabra = prompt('Escribe "remeras" para buscar las remeras y "pantalones" para buscar pantalones').toLowerCase().trim();
-if (palabra == "remeras") {
-    console.log("REMERAS");
-    console.log(conjuntoRemeras);
-} else if (palabra === "pantalones") {
-    console.log("PANTALONES");
-    console.log(conjuntoPantalones);
-} else {
-    alert("Por favor, ingresa una opción válida (remeras o pantalones).");
-    buscar();
+    const opcionesElement = document.getElementById("opciones");
+    opcionesElement.innerHTML = "";
+
+    pregunta.opciones.forEach((opcion, index) => {
+        const opcionButton = document.createElement("button");
+        opcionButton.textContent = opcion;
+        opcionButton.addEventListener("click", () => verificarRespuesta(index));
+        opcionesElement.appendChild(opcionButton);
+    });
 }
-return palabra;
-}
 
-let palabraElegida = buscar();
-let remeraEncontrada;
-let pantalonEncontrado;
-
-function mostrarPrompt() {
-let continuar = true;
-while (continuar) {
-    let agregarCarrito = prompt("Escribe el nombre del producto que quieres agregar al carrito tal como aparece").toUpperCase();
-    let hayRemera = conjuntoRemeras.find(producto => producto.nombre === agregarCarrito);
-    let hayPantalon = conjuntoPantalones.find(producto => producto.nombre === agregarCarrito);
-    if (hayRemera || hayPantalon) {
-        continuar = false;
-        if (palabraElegida === "remeras" && hayRemera) {
-            remeraEncontrada = hayRemera;
-            carrito.push(remeraEncontrada);
-            console.log(remeraEncontrada.nombre + ". Ha sido agregada al carrito.");
-        } else if (palabraElegida === "pantalones" && hayPantalon) {
-            pantalonEncontrado = hayPantalon;
-            carrito.push(pantalonEncontrado);
-            console.log(pantalonEncontrado.nombre + ". Ha sido agregado al carrito.");
-        }
+function verificarRespuesta(respuesta) {
+    const pregunta = preguntas[preguntaActual];
+    if (respuesta === pregunta.respuesta) {
+        puntaje++;
+    }
+    preguntaActual++;
+    if (preguntaActual < preguntas.length) {
+        mostrarPregunta();
     } else {
-        alert("El producto ingresado no se encuentra en esta sección. Por favor, inténtalo de nuevo.");
+        mostrarResultado();
     }
 }
 
-let continuarCarrito = prompt("¿Quieres seguir agregando productos de la misma sección? (si/no)").toLowerCase();
-if (continuarCarrito === "si") {
-    mostrarPrompt();
-} else {
-    let agregarOtros = prompt("¿Quieres agregar productos de la otra sección? (si/no)").toLowerCase();
-    if (agregarOtros === "si") {
-        palabraElegida = buscar();
-        setTimeout(mostrarPrompt, 6000);
-    } else {
-        console.log("Gracias por tu compra. Aquí está tu carrito:", carrito);
-        let total = carrito.reduce((acumulador, producto) => acumulador + producto.precio, 0);
-        console.log ("Este es el Total. " + total);
-    }
-}
+function mostrarResultado() {
+    alert(`¡Juego terminado!\nPuntaje: ${puntaje}/${preguntas.length}`);
+    reiniciarJuego();
 }
 
-setTimeout(mostrarPrompt, 6000);
+function reiniciarJuego() {
+    puntaje = 0;
+    preguntaActual = 0;
+    mostrarPregunta();
+}
+
+// Llamar a la función para iniciar el juego
+mostrarPregunta();
